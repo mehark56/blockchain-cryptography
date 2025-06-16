@@ -135,7 +135,7 @@ const HowItWorks: React.FC = () => {
               p: { xs: 3, md: 4 },
               mb: { xs: 4, md: 6 },
               textAlign: 'center',
-              background: 'linear-gradient(45deg, #008080 30%, #00695C 90%)',
+              background: 'linear-gradient(45deg, #FF9800 30%, #F57C00 90%)',
               color: 'white',
             }}
           >
