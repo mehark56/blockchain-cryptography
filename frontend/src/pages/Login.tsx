@@ -336,7 +336,7 @@ const Login: React.FC = () => {
             <Tooltip title="Contact your administrator to get access">
               <Button
                 color="primary"
-                onClick={() => window.open('mailto:admin@landregistry.com', '_blank')}
+                onClick={() => window.open('mailto:meharkulkarni.cy22@rvce.edu.in', '_blank')}
               >
                 Request Access
               </Button>
