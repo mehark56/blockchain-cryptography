@@ -163,7 +163,9 @@ const Home: React.FC = () => {
                       gap: 2,
                     }}
                   >
-                    <FaLandmark size={80} color="white" />
+                    <Box component="span">
+                      {React.createElement(FaLandmark, { size: 80, color: "white" })}
+                    </Box>
                     <Box
                       sx={{
                         display: 'flex',
@@ -179,7 +181,9 @@ const Home: React.FC = () => {
                           gap: 1,
                         }}
                       >
-                        <FaFileAlt size={40} color="white" />
+                        <Box component="span">
+                          {React.createElement(FaFileAlt, { size: 40, color: "white" })}
+                        </Box>
                         <Typography variant="body2" color="white" align="center">
                           Document
                         </Typography>
@@ -192,7 +196,9 @@ const Home: React.FC = () => {
                           gap: 1,
                         }}
                       >
-                        <FaShieldAlt size={40} color="white" />
+                        <Box component="span">
+                          {React.createElement(FaShieldAlt, { size: 40, color: "white" })}
+                        </Box>
                         <Typography variant="body2" color="white" align="center">
                           Security
                         </Typography>
@@ -205,7 +211,9 @@ const Home: React.FC = () => {
                           gap: 1,
                         }}
                       >
-                        <FaCheckCircle size={40} color="white" />
+                        <Box component="span">
+                          {React.createElement(FaCheckCircle, { size: 40, color: "white" })}
+                        </Box>
                         <Typography variant="body2" color="white" align="center">
                           Verification
                         </Typography>
@@ -254,8 +262,8 @@ const Home: React.FC = () => {
                       },
                     }}
                   >
-                    <Box sx={{ color: 'primary.main', mb: 2 }}>
-                      <feature.icon size={40} />
+                    <Box sx={{ color: 'primary.main', mb: 2 }} component="span">
+                      {React.createElement(feature.icon as any, { size: 40 })}
                     </Box>
                     <Typography variant="h6" component="h3" gutterBottom>
                       {feature.title}

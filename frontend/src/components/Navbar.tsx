@@ -166,21 +166,37 @@ const Navbar: React.FC = () => {
             }}
             onClick={() => navigate('/')}
           >
-            <FaLandmark 
-              size={28} 
-              color={theme.palette.primary.main}
-              style={{ marginRight: '8px' }}
-            />
-            <Typography
-              variant="h6"
+            <Button
+              variant="text"
+              onClick={() => navigate('/')}
               sx={{
+                display: 'flex',
+                alignItems: 'center',
                 color: theme.palette.primary.main,
-                fontWeight: 700,
-                letterSpacing: '-0.01em',
+                '&:hover': {
+                  backgroundColor: 'rgba(27, 54, 93, 0.04)',
+                },
               }}
             >
-              Land Registry
-            </Typography>
+              <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+                {React.createElement(FaLandmark, {
+                  size: 28,
+                  color: theme.palette.primary.main,
+                  style: { marginRight: '8px' }
+                })}
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{
+                    fontWeight: 700,
+                    letterSpacing: '-0.01em',
+                    color: theme.palette.primary.main,
+                  }}
+                >
+                  Land Registry
+                </Typography>
+              </Box>
+            </Button>
           </Box>
 
           {isAuthenticated ? (
