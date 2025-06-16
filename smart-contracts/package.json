@@ -1,0 +1,13 @@
+{
+  "name": "smart-contracts",
+  "version": "1.0.0",
+  "description": "Smart contracts for a blockchain-based land records project (without OpenZeppelin)",
+  "main": "truffle-config.js",
+  "scripts": {
+    "compile": "truffle compile",
+    "migrate": "truffle migrate --network development"
+  },
+  "devDependencies": {
+    "truffle": "5.11.5"
+  }
+}
