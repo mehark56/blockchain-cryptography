@@ -138,7 +138,7 @@ const Login: React.FC = () => {
           sx={{
             p: 4,
             borderRadius: 4,
-            background: 'linear-gradient(45deg, #1B365D 30%, #2C4B7A 90%)',
+            background: 'linear-gradient(45deg, #FF9800 30%, #F57C00 90%)',
             color: 'white',
             mb: 4,
           }}
