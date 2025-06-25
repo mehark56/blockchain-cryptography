@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethers Test</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" type="application/javascript"></script>
+</head>
+<body>
+    <h1>Ethers Library Test</h1>
+    <button onclick="testEthers()">Test Ethers</button>
+    <div id="result"></div>
+
+    <script>
+        async function testEthers() {
+            try {
+                const resultDiv = document.getElementById('result');
+                
+                // Test basic ethers functionality
+                const testMessage = "Hello, World!";
+                const hash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(testMessage));
+                
+                resultDiv.innerHTML = `
+                    <h3>Ethers Test Results:</h3>
+                    <p><strong>Test Message:</strong> ${testMessage}</p>
+                    <p><strong>Hash:</strong> ${hash}</p>
+                    <p><strong>Status:</strong> ✅ Ethers is working!</p>
+                `;
+                
+                // Test MetaMask connection
+                if (typeof window.ethereum !== 'undefined') {
+                    try {
+                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        resultDiv.innerHTML += `
+                            <h3>MetaMask Connection:</h3>
+                            <p><strong>Connected Account:</strong> ${accounts[0]}</p>
+                            <p><strong>Status:</strong> ✅ MetaMask is connected!</p>
+                        `;
+                    } catch (error) {
+                        resultDiv.innerHTML += `
+                            <h3>MetaMask Connection:</h3>
+                            <p><strong>Error:</strong> ${error.message}</p>
+                            <p><strong>Status:</strong> ❌ MetaMask connection failed</p>
+                        `;
+                    }
+                } else {
+                    resultDiv.innerHTML += `
+                        <h3>MetaMask Connection:</h3>
+                        <p><strong>Status:</strong> ❌ MetaMask not detected</p>
+                    `;
+                }
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h3>Error:</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 

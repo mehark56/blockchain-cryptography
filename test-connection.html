@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MetaMask Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>MetaMask Connection Test</h1>
+    
+    <div id="status"></div>
+    
+    <button onclick="connectWallet()">Connect Wallet</button>
+    <button onclick="checkBalance()">Check Balance</button>
+    <button onclick="checkNetwork()">Check Network</button>
+    
+    <div id="results"></div>
+
+    <script>
+        let currentAccount = null;
+        
+        function updateStatus(message, type = 'info') {
+            document.getElementById('status').innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function updateResults(message) {
+            document.getElementById('results').innerHTML += `<p>${message}</p>`;
+        }
+        
+        async function connectWallet() {
+            try {
+                if (typeof window.ethereum === 'undefined') {
+                    updateStatus('MetaMask is not installed!', 'error');
+                    return;
+                }
+                
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                currentAccount = accounts[0];
+                updateStatus(`Connected to account: ${currentAccount}`, 'success');
+                updateResults(`Connected: ${currentAccount}`);
+            } catch (error) {
+                updateStatus(`Error connecting: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkNetwork() {
+            try {
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                const networkId = await window.ethereum.request({ method: 'net_version' });
+                
+                updateResults(`Chain ID: ${chainId} (${parseInt(chainId, 16)})`);
+                updateResults(`Network ID: ${networkId}`);
+                
+                if (chainId === '0x539' || parseInt(chainId, 16) === 1337) {
+                    updateStatus('Connected to Ganache Local Network!', 'success');
+                } else {
+                    updateStatus('Not connected to Ganache Local Network!', 'error');
+                }
+            } catch (error) {
+                updateStatus(`Error checking network: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkBalance() {
+            try {
+                if (!currentAccount) {
+                    updateStatus('Please connect wallet first!', 'error');
+                    return;
+                }
+                
+                const balance = await window.ethereum.request({
+                    method: 'eth_getBalance',
+                    params: [currentAccount, 'latest']
+                });
+                
+                const balanceInEth = parseInt(balance, 16) / Math.pow(10, 18);
+                updateResults(`Balance: ${balanceInEth} ETH`);
+                
+                if (balanceInEth > 0) {
+                    updateStatus(`Balance found: ${balanceInEth} ETH`, 'success');
+                } else {
+                    updateStatus('No ETH found in this account!', 'error');
+                }
+            } catch (error) {
+                updateStatus(`Error checking balance: ${error.message}`, 'error');
+            }
+        }
+        
+        // Listen for account changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', function (accounts) {
+                currentAccount = accounts[0];
+                updateStatus(`Account changed to: ${currentAccount}`, 'info');
+            });
+            
+            window.ethereum.on('chainChanged', function (chainId) {
+                updateStatus(`Network changed to: ${chainId}`, 'info');
+            });
+        }
+    </script>
+</body>
+</html> 

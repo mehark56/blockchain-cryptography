@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Ethers Test</title>
+</head>
+<body>
+    <h1>Simple Ethers Test</h1>
+    <p>Open browser console and check if ethers is available</p>
+    <button onclick="testEthers()">Test Ethers in Console</button>
+    <div id="result"></div>
+
+    <script>
+        function testEthers() {
+            const resultDiv = document.getElementById('result');
+            
+            // Check if ethers is available globally
+            if (typeof ethers !== 'undefined') {
+                resultDiv.innerHTML = '<p style="color: green;">✅ Ethers is available globally!</p>';
+                console.log('Ethers version:', ethers.version);
+                console.log('Ethers utils:', ethers.utils);
+            } else {
+                resultDiv.innerHTML = '<p style="color: red;">❌ Ethers is NOT available globally</p>';
+                console.log('Ethers is not available globally');
+            }
+            
+            // Check if window.ethereum is available
+            if (typeof window.ethereum !== 'undefined') {
+                resultDiv.innerHTML += '<p style="color: green;">✅ MetaMask is available!</p>';
+                console.log('MetaMask is available');
+            } else {
+                resultDiv.innerHTML += '<p style="color: red;">❌ MetaMask is NOT available</p>';
+                console.log('MetaMask is not available');
+            }
+        }
+        
+        // Auto-test on page load
+        window.onload = function() {
+            console.log('Page loaded, checking ethers availability...');
+            testEthers();
+        };
+    </script>
+</body>
+</html> 

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MetaMask Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>MetaMask Debug Tool</h1>
+    
+    <div id="status"></div>
+    
+    <div class="test-section">
+        <h3>1. Basic Connection Test</h3>
+        <button onclick="testConnection()">Test MetaMask Connection</button>
+        <div id="connection-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. Network Test</h3>
+        <button onclick="testNetwork()">Check Network</button>
+        <div id="network-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. Account Test</h3>
+        <button onclick="testAccounts()">Get Accounts</button>
+        <div id="accounts-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. Signing Test</h3>
+        <button onclick="testSigning()">Test Message Signing</button>
+        <div id="signing-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>5. Contract Test</h3>
+        <button onclick="testContract()">Test Contract Connection</button>
+        <div id="contract-result"></div>
+    </div>
+
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+    <script>
+        let currentAccount = null;
+        
+        function updateStatus(message, type = 'info') {
+            document.getElementById('status').innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function updateResult(elementId, message) {
+            document.getElementById(elementId).innerHTML = `<p>${message}</p>`;
+        }
+        
+        async function testConnection() {
+            try {
+                updateResult('connection-result', 'Testing connection...');
+                
+                if (typeof window.ethereum === 'undefined') {
+                    updateResult('connection-result', '❌ MetaMask is not installed!');
+                    return;
+                }
+                
+                updateResult('connection-result', '✅ MetaMask is installed');
+                
+                // Test basic connection
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                currentAccount = accounts[0];
+                
+                updateResult('connection-result', `✅ Connected to account: ${currentAccount}`);
+                updateStatus('MetaMask connection successful!', 'success');
+                
+            } catch (error) {
+                updateResult('connection-result', `❌ Connection error: ${error.message}`);
+                updateStatus('MetaMask connection failed!', 'error');
+            }
+        }
+        
+        async function testNetwork() {
+            try {
+                updateResult('network-result', 'Checking network...');
+                
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                const networkVersion = await window.ethereum.request({ method: 'net_version' });
+                
+                updateResult('network-result', `Chain ID: ${chainId} (${parseInt(chainId, 16)})<br>Network Version: ${networkVersion}`);
+                
+                if (chainId === '0x539' || parseInt(chainId, 16) === 1337) {
+                    updateResult('network-result', '✅ Connected to Ganache Local Network!');
+                } else {
+                    updateResult('network-result', '❌ Not connected to Ganache Local Network!');
+                }
+                
+            } catch (error) {
+                updateResult('network-result', `❌ Network error: ${error.message}`);
+            }
+        }
+        
+        async function testAccounts() {
+            try {
+                updateResult('accounts-result', 'Getting accounts...');
+                
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                
+                if (accounts.length === 0) {
+                    updateResult('accounts-result', '❌ No accounts found. Please connect MetaMask.');
+                } else {
+                    let result = '✅ Available accounts:<br>';
+                    accounts.forEach((account, index) => {
+                        result += `${index + 1}. ${account}<br>`;
+                    });
+                    updateResult('accounts-result', result);
+                }
+                
+            } catch (error) {
+                updateResult('accounts-result', `❌ Accounts error: ${error.message}`);
+            }
+        }
+        
+        async function testSigning() {
+            try {
+                updateResult('signing-result', 'Testing message signing...');
+                
+                if (!currentAccount) {
+                    updateResult('signing-result', '❌ No account connected. Please connect first.');
+                    return;
+                }
+                
+                // Create a test message
+                const testMessage = "Hello, this is a test message for signing!";
+                const messageBytes = ethers.utils.toUtf8Bytes(testMessage);
+                const messageHash = ethers.utils.hashMessage(messageBytes);
+                
+                updateResult('signing-result', `Message: "${testMessage}"<br>Hash: ${messageHash}`);
+                
+                // Request signature
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                const signature = await signer.signMessage(testMessage);
+                
+                updateResult('signing-result', `✅ Signature successful!<br>Signature: ${signature}`);
+                
+            } catch (error) {
+                updateResult('signing-result', `❌ Signing error: ${error.message}`);
+            }
+        }
+        
+        async function testContract() {
+            try {
+                updateResult('contract-result', 'Testing contract connection...');
+                
+                const contractAddress = '0x86fb4f3F60869033733aB25e494782f28f71BF89';
+                
+                // Test if we can read from the contract
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                
+                // Simple test - get the admin address
+                const adminCall = {
+                    to: contractAddress,
+                    data: '0x8da5cb5b' // admin() function selector
+                };
+                
+                const result = await provider.call(adminCall);
+                const adminAddress = ethers.utils.getAddress(result.slice(26)); // Remove padding
+                
+                updateResult('contract-result', `✅ Contract connection successful!<br>Admin address: ${adminAddress}`);
+                
+            } catch (error) {
+                updateResult('contract-result', `❌ Contract error: ${error.message}`);
+            }
+        }
+        
+        // Listen for account changes
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', function (accounts) {
+                currentAccount = accounts[0];
+                updateStatus(`Account changed to: ${currentAccount}`, 'info');
+            });
+            
+            window.ethereum.on('chainChanged', function (chainId) {
+                updateStatus(`Network changed to: ${chainId}`, 'info');
+            });
+        }
+    </script>
+</body>
+</html> 
